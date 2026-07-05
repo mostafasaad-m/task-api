@@ -10,30 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Deploy to Server via SSH/Rsync
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST }}
-          REMOTE_USER: "deployer"
-          TARGET: "/opt/projects/task-api/"
-          ARGS: "-rlgoDIVz --delete --no-perms --no-owner --omit-dir-times"
-
-      - name: Build and Restart Containers
-        uses: appleboy/ssh-action@master
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.HOST }}
-          username: "deployer"
+          username: deployer
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/projects/task-api
+            set -e
 
-            if [ -f docker-compose.yml ]; then
-              docker compose up -d --build --remove-orphans
-            else
-              echo "docker-compose.yml not found!"
-              exit 1
+            PROJECT_DIR=/opt/projects/task-api
+
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
+              echo "Repository not found. Cloning..."
+              git clone git@github.com:mostafasaad-m/task-api.git $PROJECT_DIR
             fi
+
+            cd $PROJECT_DIR
+
+            echo "Updating repository..."
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "Building and starting containers..."
+            docker compose up -d --build --remove-orphans
+
+            echo "Deployment completed successfully."
