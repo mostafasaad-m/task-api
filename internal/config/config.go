@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -28,10 +27,6 @@ func Load() (*Config, error) {
 		DBPassword: getEnv("DB_PASSWORD", ""),
 		DBName:     getEnv("DB_NAME", ""),
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
-	}
-
-	if cfg.DBUser == "" || cfg.DBName == "" {
-		return nil, fmt.Errorf("database configuration is incomplete")
 	}
 
 	return cfg, nil
