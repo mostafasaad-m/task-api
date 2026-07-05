@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	fmt.Println("CI/CD Works!")
+	fmt.Println("CI/CD Works!  ")
 }
