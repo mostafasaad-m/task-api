@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello World")
+	fmt.Println("ci/cd last check")
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatal(err)
