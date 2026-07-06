@@ -22,7 +22,6 @@ services:
 
 volumes:
   task-api-postgres:
-    external: true
 
 networks:
   backend:
