@@ -5,23 +5,31 @@ import (
 	"net/http"
 
 	"github.com/mostafasaad-m/task-api/internal/config"
+	"github.com/mostafasaad-m/task-api/internal/handlers"
 )
 
 type Server struct {
+	cfg        *config.Config
+	auth       *handlers.AuthHandler
 	httpServer *http.Server
 }
 
-func New(cfg *config.Config) *Server {
+func New(cfg *config.Config, auth *handlers.AuthHandler) *Server {
+	srv := &Server{
+		cfg:  cfg,
+		auth: auth,
+	}
+
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/health", healthHandler)
+	mux.HandleFunc("/register", srv.auth.Register)
 
-	return &Server{
-		httpServer: &http.Server{
-			Addr:    "127.0.0.1:" + cfg.AppPort,
-			Handler: mux,
-		},
+	srv.httpServer = &http.Server{
+		Addr:    "127.0.0.1:" + cfg.AppPort,
+		Handler: mux,
 	}
+
+	return srv
 }
 
 func (s *Server) Run() error {
