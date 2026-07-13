@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/mostafasaad-m/task-api/internal/models"
@@ -41,6 +42,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	//TODO: strings.TrimSpace()
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		log.Printf("Request: %+v\n", req)
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
