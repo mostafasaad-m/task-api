@@ -23,7 +23,7 @@ func New(cfg *config.Config, auth *handlers.AuthHandler) *Server {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/register", srv.auth.Register)
-
+	mux.HandleFunc("/login", srv.auth.Login)
 	srv.httpServer = &http.Server{
 		Addr:    "127.0.0.1:" + cfg.AppPort,
 		Handler: mux,
