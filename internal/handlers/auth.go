@@ -34,6 +34,13 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+
+		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+	log.Printf("Request: %+v\n", req)
+
 	if req.Username == "" || req.Email == "" || req.Password == "" {
 		http.Error(w, "all fields are required", http.StatusBadRequest)
 		return
@@ -41,11 +48,6 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	//TODO: strings.TrimSpace()
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		log.Printf("Request: %+v\n", req)
-		http.Error(w, "invalid request body", http.StatusBadRequest)
-		return
-	}
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(req.Password),
 		bcrypt.DefaultCost,
