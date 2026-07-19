@@ -63,6 +63,8 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		PasswordHash: string(hashedPassword),
 	}
 	if err := h.users.Create(user); err != nil {
+		log.Printf("Create user error: %v", err)
+
 		http.Error(w, "failed to create user", http.StatusInternalServerError)
 		return
 	}
