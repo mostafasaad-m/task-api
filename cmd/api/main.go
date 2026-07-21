@@ -5,6 +5,7 @@ import (
 
 	"log"
 
+	"github.com/mostafasaad-m/task-api/internal/auth"
 	"github.com/mostafasaad-m/task-api/internal/config"
 	"github.com/mostafasaad-m/task-api/internal/handlers"
 	"github.com/mostafasaad-m/task-api/internal/repository"
@@ -26,10 +27,14 @@ func main() {
 	}
 	defer db.Close(context.Background())
 
+	jwtService := auth.NewJWTService(cfg.JWTSecret)
+
 	repo := repository.NewUserRepository(db)
 
-	authHandler := handlers.NewAuthHandler(repo)
-
+	authHandler := handlers.NewAuthHandler(
+		repo,
+		jwtService,
+	)
 	srv := server.New(cfg, authHandler)
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)

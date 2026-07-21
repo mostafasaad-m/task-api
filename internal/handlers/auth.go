@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/mostafasaad-m/task-api/internal/auth"
 	"github.com/mostafasaad-m/task-api/internal/models"
 	"github.com/mostafasaad-m/task-api/internal/repository"
 	"golang.org/x/crypto/bcrypt"
@@ -14,9 +15,14 @@ type AuthHandler struct {
 	users *repository.UserRepository
 }
 
-func NewAuthHandler(users *repository.UserRepository) *AuthHandler {
+func NewAuthHandler(
+	users *repository.UserRepository,
+	jwt *auth.JWTService,
+) *AuthHandler {
+
 	return &AuthHandler{
 		users: users,
+		jwt:   jwt,
 	}
 }
 
@@ -115,7 +121,16 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
+	token, err := h.jwt.Generate(
+		user.ID,
+		user.Username,
+	)
+	if err != nil {
+		http.Error(w, "failed generating token", http.StatusInternalServerError)
+		return
+	}
+
 	json.NewEncoder(w).Encode(map[string]string{
-		"message": "login successful",
+		"access_token": token,
 	})
 }
