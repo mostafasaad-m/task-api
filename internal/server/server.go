@@ -6,6 +6,7 @@ import (
 
 	"github.com/mostafasaad-m/task-api/internal/config"
 	"github.com/mostafasaad-m/task-api/internal/handlers"
+	"github.com/mostafasaad-m/task-api/internal/middleware"
 )
 
 type Server struct {
@@ -24,6 +25,13 @@ func New(cfg *config.Config, auth *handlers.AuthHandler) *Server {
 
 	mux.HandleFunc("/register", srv.auth.Register)
 	mux.HandleFunc("/login", srv.auth.Login)
+	mux.Handle(
+		"/me",
+		middleware.Auth(cfg.JWTSecret)(
+			http.HandlerFunc(handlers.Me),
+		),
+	)
+
 	srv.httpServer = &http.Server{
 		Addr:    "127.0.0.1:" + cfg.AppPort,
 		Handler: mux,
