@@ -13,6 +13,7 @@ import (
 
 type AuthHandler struct {
 	users *repository.UserRepository
+	jwt   *auth.JWTService
 }
 
 func NewAuthHandler(
