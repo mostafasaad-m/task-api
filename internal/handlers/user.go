@@ -7,6 +7,7 @@ import (
 	"github.com/mostafasaad-m/task-api/internal/middleware"
 )
 
+// test passed
 func Me(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(middleware.UserIDKey)
 
